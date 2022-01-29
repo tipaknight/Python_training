@@ -2,7 +2,7 @@ from random import choice
 
 import telebot
 
-token = ''
+token = 'Здесь токен API полученый при регистрации бота'
 
 bot = telebot.TeleBot(token)
 
@@ -60,6 +60,6 @@ def print_(message):
         tasks = 'Такой даты нет'
     bot.send_message(message.chat.id, tasks)
 
-
+# Функция постоянного обращения к серверам Телеги
 bot.polling(none_stop=True)
 
