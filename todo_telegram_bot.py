@@ -2,32 +2,33 @@ from random import choice
 
 import telebot
 
-token = 'здесь указать токен'
+
+token = 'Место для токена'
 
 bot = telebot.TeleBot(token)
 
 
-RANDOM_TASKS = ['Почитать книгу', 'Выучить Python', 'Помыть машину', 'Посмотреть сериал', 'Посомтреть новости на день']
+RANDOM_TASKS = ['Почитать книгу', 'Выучить Python', 'Помыть машину', 'Посмотреть сериал', 'Посмотреть новости на день']
 
-todos = dict()
+tasks = dict()
 
-
-HELP = '''
+HELP = """
 Список доступных команд:
-/print или /show  - напечать все задачи на заданную дату
+/show или /print  - напечать все задачи на заданную дату
 /todo или /add - добавить задачу
 /random - добавить на сегодня случайную задачу
 /help - Напечатать help
-'''
-
-
+"""
 def add_todo(date, task):
-    date = date.lower()
-    if todos.get(date) is not None:
-        todos[date].append(task)
-    else:
-        todos[date] = [task]
-
+  if date in tasks:
+      # Дата есть в словаре
+      # Добавляем в список задачу
+      tasks[date].append(task)
+  else:
+      # Даты в словаре нет
+      # Создаем запись с ключом date
+      tasks[date] = []
+      tasks[date].append(task)
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -35,30 +36,41 @@ def help(message):
 
 
 @bot.message_handler(commands=['random'])
-def random(message):
+def random_add(message):
+    date = 'сегодня'
     task = choice(RANDOM_TASKS)
-    add_todo('сегодня', task)
-    bot.send_message(message.chat.id, f'Задача {task} добавлена на сегодня')
-
-
-@bot.message_handler(commands=['add', 'todo'])
-def add(message):
-    _, date, tail = message.text.split(maxsplit=2)
-    task = ' '.join([tail])
     add_todo(date, task)
-    bot.send_message(message.chat.id, f'Задача {task} добавлена на дату {date}')
+    text = 'Задача ' + task + ' добавлена на дату ' + date
+    bot.send_message(message.chat.id, text)
 
 
-@bot.message_handler(commands=['show', 'print'])
-def print_(message):
-    date = message.text.split()[1].lower()
-    if date in todos:
-        tasks = ''
-        for task in todos[date]:
-            tasks += f'[ ] {task}\n'
+@bot.message_handler(commands=['todo', 'add'])
+def todo_add(message):
+    command = message.text.split(maxsplit=2)
+    date = command[1].lower()
+    task = command[2]
+    # проверка количества введеных символов
+    if len(task) >= 3:
+        add_todo(date, task)
+        text = 'Задача ' + task + ' добавлена на дату ' + date
     else:
-        tasks = 'Такой даты нет'
-    bot.send_message(message.chat.id, tasks)
+        text = 'Мало символов задачи'
+    bot.send_message(message.chat.id, text)
+
+@bot.message_handler(commands=['show','print'])
+def print_show(message):
+    command = message.text.split(maxsplit=1)
+    date = command[1].lower()
+    for date in command:
+        text = ""
+    if date in tasks:
+        text = date.upper() + "\n"
+        for task in tasks[date]:
+            text = text + '* ' + task + "\n"
+    else:
+        text = 'Такой даты нет выберете другую' + "\n"
+    bot.send_message(message.chat.id, text)
 
 
 bot.polling(none_stop=True)
+
