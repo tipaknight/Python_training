@@ -68,7 +68,11 @@ def print_show(message):
         for task in tasks[date]:
             text = text + '* ' + task + "\n"
     else:
-        text = 'Такой даты нет выберете другую' + "\n"
+      list_of_all_dates = []
+      for date in tasks.keys():
+        list_of_all_dates.append(date)
+        text = 'Такой даты нет выберете другую: ' +  str(list_of_all_dates) + "\n"
+
     bot.send_message(message.chat.id, text)
 
 
