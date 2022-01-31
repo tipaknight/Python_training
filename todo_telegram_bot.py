@@ -2,22 +2,22 @@ from random import choice
 
 import telebot
 
-token = 'Здесь токен API полученый при регистрации бота'
+token = 'здесь указать токен'
 
 bot = telebot.TeleBot(token)
 
 
-RANDOM_TASKS = ['Написать Гвидо письмо', 'Выучить Python', 'Записаться на курс в Нетологию', 'Посмотреть 4 сезон Рик и Морти']
+RANDOM_TASKS = ['Почитать книгу', 'Выучить Python', 'Помыть машину', 'Посмотреть сериал', 'Посомтреть новости на день']
 
 todos = dict()
 
 
 HELP = '''
 Список доступных команд:
-* print  - напечать все задачи на заданную дату
-* todo - добавить задачу
-* random - добавить на сегодня случайную задачу
-* help - Напечатать help
+/print или /show  - напечать все задачи на заданную дату
+/todo или /add - добавить задачу
+/random - добавить на сегодня случайную задачу
+/help - Напечатать help
 '''
 
 
@@ -41,7 +41,7 @@ def random(message):
     bot.send_message(message.chat.id, f'Задача {task} добавлена на сегодня')
 
 
-@bot.message_handler(commands=['add'])
+@bot.message_handler(commands=['add', 'todo'])
 def add(message):
     _, date, tail = message.text.split(maxsplit=2)
     task = ' '.join([tail])
@@ -49,7 +49,7 @@ def add(message):
     bot.send_message(message.chat.id, f'Задача {task} добавлена на дату {date}')
 
 
-@bot.message_handler(commands=['show'])
+@bot.message_handler(commands=['show', 'print'])
 def print_(message):
     date = message.text.split()[1].lower()
     if date in todos:
@@ -60,6 +60,5 @@ def print_(message):
         tasks = 'Такой даты нет'
     bot.send_message(message.chat.id, tasks)
 
-# Функция постоянного обращения к серверам Телеги
-bot.polling(none_stop=True)
 
+bot.polling(none_stop=True)
