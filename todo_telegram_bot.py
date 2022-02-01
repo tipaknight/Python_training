@@ -68,10 +68,13 @@ def print_show(message):
         for task in tasks[date]:
             text = text + '* ' + task + "\n"
     else:
+      # вводим в словарь список всех дат
       list_of_all_dates = []
+      # добавляем в список даты которые являются ключом к задачам
       for date in tasks.keys():
         list_of_all_dates.append(date)
-        text = 'Такой даты нет выберете другую: ' +  str(list_of_all_dates) + "\n"
+        # выводим даты в которых есть какое-то задание
+        text = 'Такой даты нет выберете из списка другую: ' + '\n' + str(list_of_all_dates) + "\n"
 
     bot.send_message(message.chat.id, text)
 
